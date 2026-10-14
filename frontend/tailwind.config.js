@@ -33,7 +33,8 @@ export default {
       },
       animation: {
         'fade-up': 'fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both',
-        marquee: 'marquee 28s linear infinite',
+        marquee: 'marquee 110s linear infinite',
+        'marquee-slow': 'marquee 150s linear infinite',
       },
     },
   },

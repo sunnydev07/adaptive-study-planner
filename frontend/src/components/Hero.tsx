@@ -90,12 +90,17 @@ export function Hero({ state, live, onDecompose }: { state: PlannerState; live: 
         </div>
         {/* subject ticker */}
         <motion.div variants={rise} initial="hidden" animate="show" custom={5} className="mt-8 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-          <div className="flex w-max animate-marquee gap-8 pr-8">
-            {[...state.subjects, ...state.subjects].map((s, i) => (
-              <span key={i} className="flex items-center gap-2 text-[13px] font-medium text-stone-500">
+          <div
+            className="flex w-max animate-marquee gap-8 pr-8 select-none hover:[animation-play-state:paused]"
+            title="Hover to pause"
+          >
+            {[...state.subjects, ...state.subjects, ...state.subjects, ...state.subjects].map((s, i) => (
+              <span key={i} className="flex items-center gap-2 text-[13px] font-medium text-stone-500 transition-colors hover:text-stone-900">
                 <span className="h-2.5 w-2.5 rounded-full" style={{ background: s.color }} />
-                {s.name} · exam {s.exam_date.slice(5)}
-                {s.is_struggling && <span className="rounded-full bg-sky-100 px-1.5 text-[10px] font-bold uppercase text-sky-800">struggling</span>}
+                <span>{s.name}</span>
+                <span className="text-stone-300">·</span>
+                <span className="text-stone-400">exam {s.exam_date.slice(5)}</span>
+                {s.is_struggling && <span className="rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-800">struggling</span>}
               </span>
             ))}
           </div>

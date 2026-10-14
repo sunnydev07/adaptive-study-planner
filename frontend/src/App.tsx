@@ -3,7 +3,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Leaf, RotateCcw, Wifi, WifiOff } from 'lucide-react';
 import type { PlannerState, RebalanceTrigger } from './types';
 import { api } from './api';
-import { getInitialFallbackState } from './fallbackData';
+import { getInitialFallbackState, localDecomposeWithTasks } from './fallbackData';
+import type { AiChunk } from './lib/groq';
 import { Badge, Button } from './components/ui';
 import { Hero } from './components/Hero';
 import { Controls } from './components/Controls';
@@ -82,6 +83,8 @@ export default function App() {
           state={state} pending={pending} busy={busy} decoOpen={decoOpen} setDecoOpen={setDecoOpen}
           onRun={(label, trigger: RebalanceTrigger, ids) => apply(label, s => api.rebalance(s, trigger, ids))}
           onDecompose={(goal, sub, date, diff) => apply('decompose', s => api.decompose(s, goal, sub, date, diff))}
+          onDecomposeAI={(chunks: AiChunk[], model, goal, sub, date) =>
+            apply('ai-decompose', async s => ({ data: localDecomposeWithTasks(s, goal, sub, date, chunks, model), live }))}
         />
 
         <div className="container grid gap-8 pb-16 lg:grid-cols-[1.6fr_1fr]">

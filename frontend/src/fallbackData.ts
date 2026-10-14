@@ -209,3 +209,33 @@ export function localDecompose(prev: PlannerState, goal: string, subjectId: stri
 }
 
 export function localReset(): PlannerState { return getInitialFallbackState(); }
+
+export interface AiChunkInput { title: string; duration_mins: number; difficulty: number }
+
+export function localDecomposeWithTasks(
+  prev: PlannerState, goal: string, subjectId: string, deadline: string, chunks: AiChunkInput[], sourceLabel: string,
+): PlannerState {
+  const s = clone(prev);
+  const sub = s.subjects.find(x => x.id === subjectId) ?? s.subjects[0];
+  const tid = `t-ai-${Date.now()}`;
+  const n = Math.max(1, Math.min(6, chunks.length));
+  s.tasks.push(...chunks.slice(0, n).map((c, i) => ({
+    id: `${tid}-${i}`, subject_id: sub.id, subject_name: sub.name, title: c.title,
+    duration_mins: c.duration_mins, difficulty: c.difficulty, deadline,
+    dependencies: i === 0 ? [] as string[] : [`${tid}-${i - 1}`],
+    status: 'pending', planned_mins: c.duration_mins, completed_mins: 0,
+  })));
+  const lastDate = s.schedule[s.schedule.length - 1]?.date ?? '2026-10-16';
+  chunks.slice(0, n).forEach((c, i) => {
+    s.schedule.push({
+      block_id: `b-${tid}-${i}`, task_id: `${tid}-${i}`, task_title: c.title, subject_id: sub.id,
+      subject_name: sub.name, subject_color: sub.color, date: lastDate, start_time: `${13 + i}:00`, end_time: `${13 + i}:45`,
+      duration_mins: c.duration_mins, difficulty: c.difficulty, concentration_zone: i === 0 ? 'high' : 'medium', is_break: false,
+      dependencies: i === 0 ? [] : [`${tid}-${i - 1}`], unlocks_tasks: i < n - 1 ? [`${tid}-${i + 1}`] : [],
+      status: 'pending', is_shifted: true, shift_reason: `AI-decomposed from "${goal}" (${sourceLabel}) — chunk ${i + 1}/${n}`,
+      explainability: ex(82 - i * 4, 75, 90, 70, 80, `AI-planned chunk ${i + 1}/${n} by ${sourceLabel}. Chained so each unlocks the next.`),
+    });
+  });
+  s.last_rebalance = { trigger: 'decompose', timestamp: new Date().toISOString(), summary: `Qwen (${sourceLabel}) split "${goal}" into ${n} chained blocks for ${sub.name}`, shifted_count: n, changes: chunks.slice(0, n).map(c => c.title) };
+  return recomputeAnalytics(s);
+}
