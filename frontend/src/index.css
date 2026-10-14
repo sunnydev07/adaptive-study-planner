@@ -17,7 +17,7 @@
     --border: 30 10% 88%;
     --radius: 0.9rem;
   }
-  * { @apply border-border; }
+  * { border-color: hsl(var(--border)); }
   html { scroll-behavior: smooth; }
   body {
     @apply bg-paper text-ink font-sans antialiased;
