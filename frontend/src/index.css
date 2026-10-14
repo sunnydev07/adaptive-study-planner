@@ -2,9 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+@layer base {
+  :root {
+    --background: 40 20% 98%;
+    --foreground: 20 8% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 8% 12%;
+    --muted: 36 12% 94%;
+    --muted-foreground: 24 6% 42%;
+    --primary: 20 8% 12%;
+    --primary-foreground: 40 20% 98%;
+    --accent: 152 45% 26%;
+    --accent-foreground: 40 20% 98%;
+    --border: 30 10% 88%;
+    --radius: 0.9rem;
+  }
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: #1c1917; color: #fafaf7; }
+  :focus-visible { outline: 2px solid #166534; outline-offset: 2px; border-radius: 4px; }
 }
-::-webkit-scrollbar { width: 8px; height: 8px; }
+
+@layer utilities {
+  .dotgrid {
+    background-image: radial-gradient(hsl(24 6% 42% / 0.16) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-500;
+  }
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { @apply bg-slate-700 rounded-full; }
+::-webkit-scrollbar-thumb { @apply bg-stone-300 rounded-full border-2 border-solid border-paper; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

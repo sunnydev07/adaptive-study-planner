@@ -612,6 +612,9 @@ class StudyPlannerEngine:
                     daily_used_mins += selected_task.duration_mins
                     daily_cognitive_load += (selected_task.duration_mins * selected_task.difficulty)
                     continuous_study_mins += selected_task.duration_mins
+                    current_time = task_end
+                    last_difficulty = selected_task.difficulty
+
                 # Close out window with recovery break if study was continuous for >= 45m and breaks count < 6
                 if continuous_study_mins >= 45 and time_to_mins(current_time) + 15 <= time_to_mins(win_end) and breaks_count < 6:
                     break_start = current_time
@@ -642,23 +645,6 @@ class StudyPlannerEngine:
                     breaks_count += 1
                     current_time = break_end
                     continuous_study_mins = 0
-                            end_time=break_end,
-                            duration_mins=15,
-                            difficulty=0,
-                            concentration_zone="break",
-                            is_break=True,
-                            dependencies=[],
-                            unlocks_tasks=[],
-                            status="pending",
-                            is_shifted=False,
-                            shift_reason=None,
-                            explainability=None
-                        )
-                        scheduled_blocks.append(break_block)
-                        block_counter += 1
-                        breaks_count += 1
-                        current_time = break_end
-                        continuous_study_mins = 0
 
             current_date = next_date(current_date, 1)
             day_idx += 1
